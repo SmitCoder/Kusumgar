@@ -1,0 +1,44 @@
+name: kusumgar
+description: A Flutter application to generate Excel and Docx files with professional UI.
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  path_provider: ^2.1.5
+  open_filex: ^4.7.0
+  universal_html: ^2.2.4
+  syncfusion_flutter_xlsio: ^29.2.5
+  file_saver: ^0.2.13
+  archive: ^3.6.1
+  intl: ^0.19.0
+  share_plus: ^10.0.2
+  google_fonts: ^6.1.0
+  animate_do: ^3.3.4
+  permission_handler: ^11.3.1
+  device_info_plus: ^10.1.2
+  cross_file: ^0.3.4
+  provider: ^6.1.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/logo.png
+    - assets/app_icon.png
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/app_icon.png"
