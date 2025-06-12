@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:ui';
 import 'package:flutter/foundation.dart' show debugPrint, kIsWeb, ChangeNotifier;
 import 'package:path_provider/path_provider.dart';
 import 'package:open_filex/open_filex.dart';
@@ -118,7 +117,7 @@ class ExcelGenerator extends ChangeNotifier {
     try {
       // Increment file counter for unique file naming
       _fileCounter++;
-      final String fileNameBase = 'Fabric_Test_Report_$_fileCounter';
+      final String fileNameBase = 'Test_Report_$_fileCounter';
 
       // Create a new Excel workbook and get the first sheet
       final xlsio.Workbook workbook = xlsio.Workbook();
@@ -129,7 +128,7 @@ class ExcelGenerator extends ChangeNotifier {
 
       // --- Set Column Widths ---
       sheet.getRangeByIndex(1, 1).columnWidth = 23.56;
-      sheet.getRangeByIndex(1, 2).columnWidth = 17.00;
+      sheet.getRangeByIndex(1, 2).columnWidth = 23.70;
       sheet.getRangeByIndex(1, 3).columnWidth = 8.33;
       sheet.getRangeByIndex(1, 4).columnWidth = 5.67;
       sheet.getRangeByIndex(1, 5).columnWidth = 5.67;
@@ -137,43 +136,25 @@ class ExcelGenerator extends ChangeNotifier {
       sheet.getRangeByIndex(1, 7).columnWidth = 5.67;
       sheet.getRangeByIndex(1, 8).columnWidth = 18.33;
 
-
       // --- Set Row Heights ---
-      sheet.getRangeByIndex(1, 1).rowHeight = 1.80;
-      sheet.getRangeByIndex(2, 1).rowHeight = 102.60;
+      sheet.getRangeByIndex(1, 1).rowHeight = 1.80; // Row 1
+      sheet.getRangeByIndex(2, 1).rowHeight = 102.60; // Row 2 (Company Header)
 
       // --- Define Styles ---
       final companyTitleStyle = workbook.styles.add('companyTitleStyle');
       companyTitleStyle
         ..hAlign = xlsio.HAlignType.center
         ..vAlign = xlsio.VAlignType.center
-        ..fontSize = 20
-        ..bold = true;
+        ..fontSize = 12
+        ..bold = true
+        ..wrapText = true;
 
-      final companyTitleStyle1 = workbook.styles.add('companyTitleStyle1');
-      companyTitleStyle1
-        ..hAlign = xlsio.HAlignType.center
-        ..vAlign = xlsio.VAlignType.center
-        ..fontSize = 11;
-
-      final company = workbook.styles.add('company');
-      company
+      final headerStyle = workbook.styles.add('headerStyle');
+      headerStyle
         ..hAlign = xlsio.HAlignType.center
         ..vAlign = xlsio.VAlignType.center
         ..fontSize = 11
-        ..bold = true;
-
-      final type = workbook.styles.add('Type');
-      type
-        ..hAlign = xlsio.HAlignType.right
-        ..vAlign = xlsio.VAlignType.center
-        ..fontSize = 11;
-
-      final type10 = workbook.styles.add('Type10');
-      type10
-        ..hAlign = xlsio.HAlignType.center
-        ..vAlign = xlsio.VAlignType.center
-        ..fontSize = 11
+        ..bold = true
         ..wrapText = true;
 
       final labelStyle = workbook.styles.add('labelStyle');
@@ -187,12 +168,6 @@ class ExcelGenerator extends ChangeNotifier {
         ..hAlign = xlsio.HAlignType.left
         ..vAlign = xlsio.VAlignType.center;
 
-      final yellowValueStyle = workbook.styles.add('yellowValueStyle');
-      yellowValueStyle
-        ..hAlign = xlsio.HAlignType.left
-        ..vAlign = xlsio.VAlignType.center
-        ..backColorRgb = const Color(0xFFFFFF00);
-
       final tableHeaderStyle = workbook.styles.add('tableHeaderStyle');
       tableHeaderStyle
         ..hAlign = xlsio.HAlignType.center
@@ -203,489 +178,212 @@ class ExcelGenerator extends ChangeNotifier {
         ..borders.all.lineStyle = xlsio.LineStyle.thin
         ..borders.all.color = '#000000';
 
-      final type4 = workbook.styles.add('Type4');
-      type4
-        ..hAlign = xlsio.HAlignType.center
-        ..vAlign = xlsio.VAlignType.center
-        ..fontSize = 11;
-
-      final type5 = workbook.styles.add('Type5');
-      type5
+      final item = workbook.styles.add('item');
+      item
+        ..bold = true
         ..hAlign = xlsio.HAlignType.left
         ..vAlign = xlsio.VAlignType.top
-        ..fontSize = 11
-        ..bold = true;
+        ..wrapText = true;
 
-      final type6 = workbook.styles.add('Type6');
-      type6
-        ..hAlign = xlsio.HAlignType.center
-        ..vAlign = xlsio.VAlignType.bottom
-        ..fontSize = 9;
 
-      final type7 = workbook.styles.add('Type7');
-      type7
+
+      final dataStyle = workbook.styles.add('dataStyle');
+      dataStyle
         ..hAlign = xlsio.HAlignType.center
         ..vAlign = xlsio.VAlignType.center
-        ..fontSize = 11;
-
-      final type8 = workbook.styles.add('Type8');
-      type8
-        ..hAlign = xlsio.HAlignType.left
-        ..vAlign = xlsio.VAlignType.top
-        ..fontSize = 11;
-
-      final type11 = workbook.styles.add('Type11');
-      type11
-        ..hAlign = xlsio.HAlignType.center
-        ..vAlign = xlsio.VAlignType.top
         ..fontSize = 11
-        ..bold = true;
+        ..wrapText = true
+        ..borders.all.lineStyle = xlsio.LineStyle.thin
+        ..borders.all.color = '#000000';
 
-      final rightBorderStyle = workbook.styles.add('rightBorderStyle');
-      rightBorderStyle.borders.right.lineStyle = xlsio.LineStyle.thin;
-
-      final topBorderStyle = workbook.styles.add('topBorderStyle');
-      topBorderStyle.borders.top.lineStyle = xlsio.LineStyle.thin;
-
-      final bottomBorderStyle = workbook.styles.add('bottomBorderStyle');
-      bottomBorderStyle.borders.bottom.lineStyle = xlsio.LineStyle.thin;
-
-      // --- Header Section ---
+      // --- Company Header ---
       sheet.getRangeByName('A2:H2').merge();
-      sheet.getRangeByName('A2').setText('Kusumgar Limited');
+      sheet.getRangeByName('A2').setText(
+          '''KUSUMGAR LIMITED
+An ISO 9001:2015 Certified Company
+House of Synthetic Textile
+101/102, Manjushree, V.M.Road, Corner of N.S.Road No. 5
+JVPD Scheme, Vile Parle (West), Mumbai 400056.
+Tel. No. 2618 4341/2618 4350 Fax No. 26115651''');
       sheet.getRangeByName('A2:H2').cellStyle = companyTitleStyle;
 
+      // --- Test Report Header ---
       sheet.getRangeByName('A3:H3').merge();
       sheet.getRangeByName('A3').setText('TEST REPORT');
-      sheet.getRangeByName('A3:H3').cellStyle = companyTitleStyle1;
+      sheet.getRangeByName('A3:H3').cellStyle = headerStyle;
+      sheet.setRowHeightInPixels(3, 30); // Set height for row 3 (TEST REPORT)
 
-
+      // Report Details
       sheet.getRangeByName('A4').setText('Report No.');
-      sheet.getRangeByName('A4').cellStyle = company;
-
+      sheet.getRangeByName('A4').cellStyle = labelStyle;
       sheet.getRangeByName('B4').setText('Q250001330');
-      sheet.getRangeByName('B4').cellStyle = company;
+      sheet.getRangeByName('B4').cellStyle = valueStyle;
 
       sheet.getRangeByName('C4').setText('Date');
-      sheet.getRangeByName('C4').cellStyle = company;
-
-      sheet.getRangeByName('D4:H4').merge();
+      sheet.getRangeByName('C4').cellStyle = labelStyle;
       sheet.getRangeByName('D4').setText('21-04-2025');
-      sheet.getRangeByName('D4:H4').cellStyle = type10;
+      sheet.getRangeByName('D4').cellStyle = valueStyle;
 
       sheet.getRangeByName('A5:A15').merge();
       sheet.getRangeByName('A5').setText('Item');
-      sheet.getRangeByName('A5:A15').cellStyle = type10;
+      sheet.getRangeByName('A5').cellStyle = item;
+      // sheet.getRangeByName('A3:H3').cellStyle = headerStyle;
+      // sheet.setRowHeightInPixels(3, 30); // Set height for row 3 (TEST REPORT)
 
       sheet.getRangeByName('B5:B15').merge();
-      sheet.getRangeByName('B5').setText('166452 CLOTH,NYL,65",     FG 24165 INTERNATIONAL-P44378 T4-NB PRODUCT NO: INT-P44378 T4-NB');
-      sheet.getRangeByName('B5:B15').cellStyle = type10;
+
+      sheet.getRangeByName('B5').setText('166452\nCLOTH,NYL,65",\nFG 24165\nINTERNATIONAL-\nP44378 T4-NB\n');
+      sheet.getRangeByName('B5').cellStyle = item;
 
       sheet.getRangeByName('C5:C15').merge();
       sheet.getRangeByName('C5').setText('Customer');
-      sheet.getRangeByName('C5:C15').cellStyle = type10;
+      sheet.getRangeByName('C5').cellStyle = item;
+
 
       sheet.getRangeByName('D5:H5').merge();
       sheet.getRangeByName('D5').setText('Airborne Systems NA of CA Inc.');
-      sheet.getRangeByName('D5:H5').cellStyle = type10;
+      sheet.getRangeByName('D5').cellStyle = valueStyle;
 
-      sheet.getRangeByName('E6:H6').merge();
-      sheet.getRangeByName('E6').setText('Airborne Systems NA of CA Inc.');
-      sheet.getRangeByName('E6:H6').cellStyle = type10;
-
-      sheet.getRangeByName('E7:H7').merge();
-      sheet.getRangeByName('E7').setText('Airborne Systems NA of CA Inc.');
-      sheet.getRangeByName('E7:H7').cellStyle = type10;
-
-      sheet.getRangeByName('E8:H8').merge();
-      sheet.getRangeByName('E8').setText('Airborne Systems NA of CA Inc.');
-      sheet.getRangeByName('E8:H8').cellStyle = type10;
-
-      sheet.getRangeByName('E9:H9').merge();
-      sheet.getRangeByName('E9').setText('Airborne Systems NA of CA Inc.');
-      sheet.getRangeByName('E9:H9').cellStyle = type10;
-
-      sheet.getRangeByName('E10:H10').merge();
-      sheet.getRangeByName('E10').setText('Airborne Systems NA of CA Inc.');
-      sheet.getRangeByName('E10:H10').cellStyle = type10;
-
-      sheet.getRangeByName('E11:H11').merge();
-      sheet.getRangeByName('E11').setText('Airborne Systems NA of CA Inc.');
-      sheet.getRangeByName('E11:H11').cellStyle = type10;
-
-      sheet.getRangeByName('E12:H12').merge();
-      sheet.getRangeByName('E12').setText('Airborne Systems NA of CA Inc.');
-      sheet.getRangeByName('E12:H12').cellStyle = type10;
-
-      sheet.getRangeByName('E13:H13').merge();
-      sheet.getRangeByName('E13').setText('Airborne Systems NA of CA Inc.');
-      sheet.getRangeByName('E13:H13').cellStyle = type10;
-
-      sheet.getRangeByName('E14:H14').merge();
-      sheet.getRangeByName('E14').setText('Airborne Systems NA of CA Inc.');
-      sheet.getRangeByName('E14:H14').cellStyle = type10;
-
-      sheet.getRangeByName('E15:H15').merge();
-      sheet.getRangeByName('E15').setText('Airborne Systems NA of CA Inc.');
-      sheet.getRangeByName('E15:H15').cellStyle = type10;
-
-
-
-
-
-
-
-
-
-
-
-      // sheet.getRangeByName('H5:I5').merge();
-      // sheet.getRangeByName('H5').setText('KCPL/K/QA/TR-01');
-      // sheet.getRangeByName('H5:I5').cellStyle = type10;
-      // sheet.getRangeByName('H5:I5').cellStyle.borders.all.lineStyle = xlsio.LineStyle.thin;
-      // sheet.getRangeByName('H5:I5').cellStyle.borders.all.color = '#000000';
-      //
-      // // --- Labels and Values (B6:B20, C6:F20, G6:G20, H6:I20) ---
-      // sheet.getRangeByName('C6:F6').merge();
-      // sheet.getRangeByName('C7:F7').merge();
-      // sheet.getRangeByName('C8:F8').merge();
-      // sheet.getRangeByName('C9:F9').merge();
-      // sheet.getRangeByName('C11:F11').merge();
-      // sheet.getRangeByName('C12:F12').merge();
-      // sheet.getRangeByName('C13:F13').merge();
-      // sheet.getRangeByName('C14:F14').merge();
-      // sheet.getRangeByName('C15:F15').merge();
-      // sheet.getRangeByName('C16:F16').merge();
-      // sheet.getRangeByName('C17:F17').merge();
-      // sheet.getRangeByName('C18:F18').merge();
-      // sheet.getRangeByName('C19:F19').merge();
-      // sheet.getRangeByName('C20:F20').merge();
-      //
-      // sheet.getRangeByName('B6').setText('Report No');
-      // sheet.getRangeByName('B6').cellStyle = labelStyle;
-      // sheet.getRangeByName('C6:F6').setText('Q250001330');
-      // sheet.getRangeByName('C6').cellStyle = yellowValueStyle;
-      //
-      // sheet.getRangeByName('B7').setText('Rec Dt of Sample');
-      // sheet.getRangeByName('B7').cellStyle = labelStyle;
-      // sheet.getRangeByName('C7:F7').setText('05-04-2025');
-      // sheet.getRangeByName('C7:F7').cellStyle = valueStyle;
-      //
-      // sheet.getRangeByName('B8').setText('Date of Testing');
-      // sheet.getRangeByName('B8').cellStyle = labelStyle;
-      // sheet.getRangeByName('C8:F8').setText('05-04-2025');
-      // sheet.getRangeByName('C8:F8').cellStyle = valueStyle;
-      //
-      // sheet.getRangeByName('B9').setText('MFG Quality No');
-      // sheet.getRangeByName('B9').cellStyle = labelStyle;
-      // sheet.getRangeByName('C9:F9').setText('PWNN4201');
-      // sheet.getRangeByName('C9:F9').cellStyle = valueStyle;
-      //
-      // sheet.getRangeByName('B10').setText('Dimensions');
-      // sheet.getRangeByName('B10').cellStyle = labelStyle;
-      // sheet.getRangeByName('C10').setText('ACL02');
-      // sheet.getRangeByName('C10').cellStyle = valueStyle;
-      // sheet.getRangeByName('D10').setText('GN0088');
-      // sheet.getRangeByName('D10').cellStyle = valueStyle;
-      // sheet.getRangeByName('E10').setText('WRSI01');
-      // sheet.getRangeByName('E10').cellStyle = valueStyle;
-      // sheet.getRangeByName('F10').setText('170');
-      // sheet.getRangeByName('F10').cellStyle = valueStyle;
-      //
-      // sheet.getRangeByName('B11').setText('Material');
-      // sheet.getRangeByName('B11').cellStyle = labelStyle;
-      // sheet.getRangeByName('C11:F11').setText('NYLON 66 NYLON 66');
-      // sheet.getRangeByName('C11:F11').cellStyle = valueStyle;
-      //
-      // sheet.getRangeByName('B12').setText('SO No');
-      // sheet.getRangeByName('B12').cellStyle = labelStyle;
-      // sheet.getRangeByName('C12:F12').setText('SO2425-001457');
-      // sheet.getRangeByName('C12:F12').cellStyle = valueStyle;
-      //
-      // sheet.getRangeByName('B13').setText('MFG Unit');
-      // sheet.getRangeByName('B13').cellStyle = labelStyle;
-      // sheet.getRangeByName('C13:F13').setText('Kusumgar LIMITED (Ka');
-      // sheet.getRangeByName('C13:F13').cellStyle = valueStyle;
-      //
-      // sheet.getRangeByName('B14').setText('Colour');
-      // sheet.getRangeByName('B14').cellStyle = labelStyle;
-      // sheet.getRangeByName('C14:F14').setText('GN0088 LD NO. 4448 - Blue');
-      // sheet.getRangeByName('C14:F14').cellStyle = valueStyle;
-      //
-      // sheet.getRangeByName('B15').setText('Warp Yarn');
-      // sheet.getRangeByName('B15').cellStyle = labelStyle;
-      // sheet.getRangeByName('C15:F15').setText('');
-      // sheet.getRangeByName('C15:F15').cellStyle = valueStyle;
-      //
-      // sheet.getRangeByName('B16').setText('Warp Yarn-1');
-      // sheet.getRangeByName('B16').cellStyle = labelStyle;
-      // sheet.getRangeByName('C16:F16').setText('');
-      // sheet.getRangeByName('C16:F16').cellStyle = valueStyle;
-      //
-      // sheet.getRangeByName('B17').setText('Weft Yarn');
-      // sheet.getRangeByName('B17').cellStyle = labelStyle;
-      // sheet.getRangeByName('C17:F17').setText('');
-      // sheet.getRangeByName('C17:F17').cellStyle = valueStyle;
-      //
-      // sheet.getRangeByName('B18').setText('Weft Yarn-1');
-      // sheet.getRangeByName('B18').cellStyle = labelStyle;
-      // sheet.getRangeByName('C18:F18').setText('');
-      // sheet.getRangeByName('C18:F18').cellStyle = valueStyle;
-      //
-      // sheet.getRangeByName('B19').setText('Reed');
-      // sheet.getRangeByName('B19').cellStyle = labelStyle;
-      // sheet.getRangeByName('C19:F19').setText('');
-      // sheet.getRangeByName('C19:F19').cellStyle = valueStyle;
-      //
-      // sheet.getRangeByName('B20').setText('Pick');
-      // sheet.getRangeByName('B20').cellStyle = labelStyle;
-      // sheet.getRangeByName('C20:F20').setText('');
-      // sheet.getRangeByName('C20:F20').cellStyle = valueStyle;
-      //
-      // sheet.getRangeByName('H6:I6').merge();
-      // sheet.getRangeByName('H7:I7').merge();
-      // sheet.getRangeByName('H8:I8').merge();
-      // sheet.getRangeByName('H9:I9').merge();
-      // sheet.getRangeByName('H10:I10').merge();
-      // sheet.getRangeByName('H11:I11').merge();
-      // sheet.getRangeByName('H12:I12').merge();
-      // sheet.getRangeByName('H13:I13').merge();
-      // sheet.getRangeByName('H14:I14').merge();
-      // sheet.getRangeByName('H15:I15').merge();
-      // sheet.getRangeByName('H16:I16').merge();
-      // sheet.getRangeByName('H17:I17').merge();
-      // sheet.getRangeByName('H18:I18').merge();
-      // sheet.getRangeByName('H19:I19').merge();
-      //
-      // sheet.getRangeByName('G6').setText('Date');
-      // sheet.getRangeByName('G6').cellStyle = labelStyle;
-      // sheet.getRangeByName('H6:I6').setText('05-04-2025');
-      // sheet.getRangeByName('H6:I6').cellStyle = valueStyle;
-      //
-      // sheet.getRangeByName('G7').setText('Project Leader');
-      // sheet.getRangeByName('G7').cellStyle = labelStyle;
-      // sheet.getRangeByName('H7:I7').setText('Sandeep');
-      // sheet.getRangeByName('H7:I7').cellStyle = valueStyle;
-
-      sheet.getRangeByName('G8').setText('Reg/Dev');
-      sheet.getRangeByName('G8').cellStyle = labelStyle;
-      sheet.getRangeByName('H8:I8').setText('Regular');
-      sheet.getRangeByName('H8:I8').cellStyle = valueStyle;
-
-      sheet.getRangeByName('G9').setText('Sales Quality No');
-      sheet.getRangeByName('G9').cellStyle = labelStyle;
-      sheet.getRangeByName('H9:I9').setText('CLOTH,NYL,65",FG');
-      sheet.getRangeByName('H9:I9').cellStyle = valueStyle;
-
-      sheet.getRangeByName('G10').setText('Customer Name');
-      sheet.getRangeByName('G10').cellStyle = labelStyle;
-      sheet.getRangeByName('H10:I10').setText('Airborne Systems Limited.');
-      sheet.getRangeByName('H10:I10').cellStyle = yellowValueStyle;
-
-      sheet.getRangeByName('G11').setText('Type of Finish');
-      sheet.getRangeByName('G11').cellStyle = labelStyle;
-      sheet.getRangeByName('H11:I11').setText('WRSI01 No Finish');
-      sheet.getRangeByName('H11:I11').cellStyle = valueStyle;
-
-      sheet.getRangeByName('G12').setText('Batch No');
-      sheet.getRangeByName('G12').cellStyle = labelStyle;
-      sheet.getRangeByName('H12:I12').setText('24P41768');
-      sheet.getRangeByName('H12:I12').cellStyle = valueStyle;
-
-      sheet.getRangeByName('G13').setText('Unit');
-      sheet.getRangeByName('G13').cellStyle = labelStyle;
-      sheet.getRangeByName('H13:I13').setText('');
-      sheet.getRangeByName('H13:I13').cellStyle = valueStyle;
-
-      sheet.getRangeByName('G14').setText('Stenter No.');
-      sheet.getRangeByName('G14').cellStyle = labelStyle;
-      sheet.getRangeByName('H14:I14').setText('');
-      sheet.getRangeByName('H14:I14').cellStyle = valueStyle;
-
-      sheet.getRangeByName('G15').setText('Loom No');
-      sheet.getRangeByName('G15').cellStyle = labelStyle;
-      sheet.getRangeByName('H15:I15').setText('');
-      sheet.getRangeByName('H15:I15').cellStyle = valueStyle;
-
-      sheet.getRangeByName('G16').setText('Beam No');
-      sheet.getRangeByName('G16').cellStyle = labelStyle;
-      sheet.getRangeByName('H16:I16').setText('');
-      sheet.getRangeByName('H16:I16').cellStyle = valueStyle;
-
-      sheet.getRangeByName('G17').setText('No of Samples');
-      sheet.getRangeByName('G17').cellStyle = labelStyle;
-      sheet.getRangeByName('H17:I17').setText('1');
-      sheet.getRangeByName('H17:I17').cellStyle = valueStyle;
-
-      sheet.getRangeByName('G18').setText('R.S');
-      sheet.getRangeByName('G18').cellStyle = labelStyle;
-      sheet.getRangeByName('H18:I18').setText('');
-      sheet.getRangeByName('H18:I18').cellStyle = valueStyle;
-
-      sheet.getRangeByName('G19').setText('P/c Roll No Result');
-      sheet.getRangeByName('G19').cellStyle = labelStyle;
-      sheet.getRangeByName('H19:I19').setText('24045849');
-      sheet.getRangeByName('H19:I19').cellStyle = yellowValueStyle;
-
-      // --- Table Data (B21:I63) ---
-      for (int i = 0; i < testData.length; i++) {
-        int row = 22 + i;
-
-        sheet.getRangeByName('C$row:D$row').merge();
-        sheet.getRangeByName('B$row').setValue(testData[i][0]);
-        sheet.getRangeByName('C$row:D$row').setValue(testData[i][1]);
-        sheet.getRangeByName('E$row').setValue(testData[i][2]);
-        sheet.getRangeByName('F$row').setValue(testData[i][3]);
-        sheet.getRangeByName('G$row').setValue(testData[i][4]);
-        sheet.getRangeByName('H$row').setValue(testData[i][5]);
-        sheet.getRangeByName('I$row').setValue(testData[i][6]);
-
-        final dataStyle = workbook.styles.add('dataStyle$row');
-        dataStyle
-          ..hAlign = xlsio.HAlignType.center
-          ..vAlign = xlsio.VAlignType.center
-          ..borders.all.lineStyle = xlsio.LineStyle.thin
-          ..borders.all.color = '#000000'
-          ..wrapText = true;
-
-        sheet.getRangeByName('B$row').cellStyle = dataStyle;
-        sheet.getRangeByName('C$row:D$row').cellStyle = dataStyle;
-        sheet.getRangeByName('E$row').cellStyle = dataStyle;
-        sheet.getRangeByName('F$row').cellStyle = dataStyle;
-        sheet.getRangeByName('G$row').cellStyle = dataStyle;
-        sheet.getRangeByName('H$row').cellStyle = dataStyle;
-        sheet.getRangeByName('I$row').cellStyle = dataStyle;
+      // Lot Numbers
+      int lotRow = 6;
+      final lots = [
+        '24P32725 (391.52 Yard)',
+        '24P33570 (195.76 Yard)',
+        '24P33937 (2,090.98 Yard)',
+        '24P35293 (317.15 Yard)',
+        '24P41229 (1,735.56 Yard)',
+        '24P41230 (1,863.51 Yard)',
+        '24P41231 (2,063.65 Yard)',
+        '24P41764 (2,061.45 Yard)',
+        '24P41765 (2,230.97 Yard)',
+        '24P41768 (2,035.21 Yard)',
+      ];
+      for (var lot in lots) {
+        sheet.getRangeByName('E$lotRow:H$lotRow').merge();
+        sheet.getRangeByName('D$lotRow').setText('Lot:');
+        sheet.getRangeByName('E$lotRow').setText('$lot');
+        sheet.getRangeByName('E$lotRow').cellStyle = valueStyle;
+        sheet.setRowHeightInPixels(lotRow, 20);
+        lotRow++;
       }
 
-      sheet.getRangeByName('B21').setText('Test');
-      sheet.getRangeByName('C21:D21').setText('Test Method No.');
-      sheet.getRangeByName('E21').setText('Result');
-      sheet.getRangeByName('F21').setText('Standard');
-      sheet.getRangeByName('G21').setText('Minimum');
-      sheet.getRangeByName('H21').setText('Maximum');
-      sheet.getRangeByName('I21').setText('Remarks');
+      // Additional Details
+      sheet.getRangeByName('A$lotRow').setText('Q. No.');
+      sheet.getRangeByName('A$lotRow').cellStyle = labelStyle;
+      sheet.getRangeByName('B$lotRow').setText('4201 (GN0088)');
+      sheet.getRangeByName('B$lotRow').cellStyle = valueStyle;
 
-      sheet.getRangeByName('B21').cellStyle = tableHeaderStyle;
-      sheet.getRangeByName('C21:D21').cellStyle = tableHeaderStyle;
-      sheet.getRangeByName('E21').cellStyle = tableHeaderStyle;
-      sheet.getRangeByName('F21').cellStyle = tableHeaderStyle;
-      sheet.getRangeByName('G21').cellStyle = tableHeaderStyle;
-      sheet.getRangeByName('H21').cellStyle = tableHeaderStyle;
-      sheet.getRangeByName('I21').cellStyle = tableHeaderStyle;
+      sheet.getRangeByName('C$lotRow').setText('Qty.:');
+      sheet.getRangeByName('C$lotRow').cellStyle = labelStyle;
+      sheet.getRangeByName('D$lotRow').setText('14,985.73 Yards');
+      sheet.getRangeByName('D$lotRow').cellStyle = valueStyle;
 
-      // --- Footer Section (B64:I69) ---
-      sheet.getRangeByName('B64:C64').merge();
-      sheet.getRangeByName('B65:C65').merge();
-      sheet.getRangeByName('B66:C66').merge();
-      sheet.getRangeByName('B67:C67').merge();
-      sheet.getRangeByName('B68:C68').merge();
-      sheet.getRangeByName('G64:I64').merge();
-      sheet.getRangeByName('G65:I65').merge();
-      sheet.getRangeByName('G66:I66').merge();
-      sheet.getRangeByName('D64:F64').merge();
-      sheet.getRangeByName('D65:F65').merge();
-      sheet.getRangeByName('D66:F66').merge();
-      sheet.getRangeByName('D67:I67').merge();
-      sheet.getRangeByName('D68:E68').merge();
-      sheet.getRangeByName('F68:G68').merge();
-      sheet.getRangeByName('H68:I68').merge();
-      sheet.getRangeByName('B69:I69').merge();
+      sheet.getRangeByName('E$lotRow').setText('Rolls:');
+      sheet.getRangeByName('E$lotRow').cellStyle = labelStyle;
+      sheet.getRangeByName('F$lotRow').setText('66');
+      sheet.getRangeByName('F$lotRow').cellStyle = valueStyle;
+      sheet.setRowHeightInPixels(lotRow, 20);
+      lotRow++;
 
-      sheet.getRangeByName('B64:C64').setText('Final Flag');
-      sheet.getRangeByName('B64:C64').cellStyle = tableHeaderStyle;
+      sheet.getRangeByName('A$lotRow').setText('Width');
+      sheet.getRangeByName('A$lotRow').cellStyle = labelStyle;
+      sheet.getRangeByName('B$lotRow').setText('165.0 CMS (65.0”)');
+      sheet.getRangeByName('B$lotRow').cellStyle = valueStyle;
 
-      sheet.getRangeByName('B65:C65').setText('Tested By');
-      sheet.getRangeByName('B65:C65').cellStyle = tableHeaderStyle;
+      sheet.getRangeByName('C$lotRow').setText('Invoice No.');
+      sheet.getRangeByName('C$lotRow').cellStyle = labelStyle;
+      sheet.getRangeByName('D$lotRow').setText('ES25260039');
+      sheet.getRangeByName('D$lotRow').cellStyle = valueStyle;
 
-      sheet.getRangeByName('B66:C66').setText('Anil Pandit');
-      sheet.getRangeByName('B66:C66').cellStyle = type7;
+      sheet.getRangeByName('E$lotRow').setText('21-04-2025');
+      sheet.getRangeByName('E$lotRow').cellStyle = valueStyle;
+      sheet.setRowHeightInPixels(lotRow, 20);
+      lotRow++;
 
-      sheet.getRangeByName('B67:C67').setText('Remarked By:');
-      sheet.getRangeByName('B67:C67').cellStyle = type11;
+      // --- Test Results Table ---
+      int tableStartRow = lotRow + 1;
+      sheet.getRangeByName('A$tableStartRow').setText('Test');
+      sheet.getRangeByName('B$tableStartRow').setText('Test Method');
+      sheet.getRangeByName('C$tableStartRow').setText('Pc No. 24045849');
+      sheet.getRangeByName('D$tableStartRow').setText('');
+      sheet.getRangeByName('E$tableStartRow').setText('');
+      sheet.getRangeByName('F$tableStartRow').setText('');
+      sheet.getRangeByName('G$tableStartRow').setText('');
+      sheet.getRangeByName('H$tableStartRow').setText('Standard');
+      sheet.getRangeByName('A$tableStartRow:H$tableStartRow').cellStyle = tableHeaderStyle;
+      sheet.setRowHeightInPixels(tableStartRow, 40);
+      tableStartRow++;
 
-      sheet.getRangeByName('B68:C68').setText('Verified by:');
-      sheet.getRangeByName('B68:C68').cellStyle = type11;
+      // Table Data
+      final tests = [
+        ['Yarn', 'ASTM D276', 'Nylon 6-6 H.T. light and heat resistance', '', '', '', '', 'Nylon 6-6 H.T. light and heat resistance'],
+        ['Color', 'Visual', 'Foliage Green', '', '', '', '', 'Foliage Green'],
+        ['Colorfastness Light', 'AATCC 16.3', '3-4', '', '', '', '', '3-4 min.'],
+        ['Colorfastness Laundering:', 'AATCC 61, Test 1A AATCC 8', '', '', '', '', '', ''],
+        ['Color Change-', '', '4', '', '', '', '', '3-4 min.'],
+        ['Staining-', '', '4', '', '', '', '', '3-4 min.'],
+        ['Crocking:', 'AATCC 8', '', '', '', '', '', ''],
+        ['Dry-', '', '4.5', '', '', '', '', '3.5 min.'],
+        ['Wet-', '', '4.5', '', '', '', '', '3.5 min.'],
+        ['Bleeding in damp air', '4.9.3 As Mention in PIA-C-44378E', '4', '', '', '', '', '3-4 min.'],
+        ['Light resistance: Warp-', '4.9.2.1 As Mention in PIA-C-44378E', '17', '20', '18', '19', '20', 'Not lose more than 25% of original strength'],
+        ['(Light Source – Xenon)', '', 'Avg: 18.8', '', '', '', '', ''],
+        ['Light resistance: Filling', '', '19', '19', '20', '18', '16', ''],
+        ['(Light Source – Xenon)', '', 'Avg: 18.4', '', '', '', '', ''],
+        ['Heat resistance: Warp-', '4.9.2.2 As Mention in PIA-C-44378E', '20', '21', '18', '21', '15', 'Not lose more than 25% of original strength'],
+        ['', '', 'Avg: 19.0', '', '', '', '', ''],
+        ['Heat resistance: Filling-', '', '17', '20', '20', '17', '17', ''],
+        ['', '', 'Avg: 18.2', '', '', '', '', ''],
+        ['Weight', 'ASTM D3776', '1.12', '1.11', '1.12', '1.12', '1.11', 'OSY 1.20 Max.'],
+        ['', '', 'Avg: 1.12', '', '', '', '', ''],
+        ['Thickness', 'ASTM D1777', '0.0015', '0.0016', '0.0016', '0.0015', '0.0015', '0.003” Max.'],
+        ['', '', 'Avg: 0.0015', '', '', '', '', ''],
+        ['Breaking strength: Warp-', 'ASTM D5035', '48.0', '48.5', '48.2', '48.9', '49.0', 'Min. 45 lbs/inch'],
+        ['', '', 'Avg: 48.5', '', '', '', '', ''],
+        ['Breaking strength: Filling-', '', '46.0', '47.8', '47.2', '47.3', '46.7', ''],
+        ['', '', 'Avg: 47.0', '', '', '', '', ''],
+        ['% Elongation: Warp-', 'ASTM D5035', '23.0', '24.4', '24.9', '24.1', '24.3', 'Min. 20%'],
+        ['', '', 'Avg: 24.1', '', '', '', '', ''],
+        ['% Elongation: Filling-', '', '21.0', '21.5', '22.5', '22.6', '22.9', ''],
+        ['', '', 'Avg: 22.1', '', '', '', '', ''],
+        ['Tearing strength: Warp-', 'ASTM D2261', '7.0', '8.0', '7.6', '7.7', '8.1', 'Min. 5 lbs'],
+        ['', '', 'Avg: 7.7', '', '', '', '', ''],
+        ['Tearing strength: Filling-', '', '6.5', '7.9', '6.9', '7.5', '7.2', ''],
+        ['', '', 'Avg: 7.2', '', '', '', '', ''],
+        ['Air permeability', 'ASTM D737', '0.77', '0.64', '0.86', '1.05', '1.13', '0.5 to 3.0 CFM'],
+        ['', '', 'Avg: 0.89', '', '', '', '', ''],
+        ['Yarn: Warp-', 'ASTM D3775', '132', '132', '132', '132', '132', 'Min. 126 per Inch'],
+        ['', '', 'Avg: 132', '', '', '', '', ''],
+        ['Yarn: Filling-', '', '136', '136', '136', '136', '136', 'Min. 132 per Inch'],
+        ['', '', 'Avg: 136', '', '', '', '', ''],
+        ['Weave (pattern)', 'Visual', 'Rip stop Figure1', '', '', '', '', 'Rip stop Figure1'],
+        ['Width', 'ASTM D3774', '65.0”', '', '', '', '', '65-1/2"+/-1/2"'],
+        ['pH Value', 'AATCC 81', '6.2', '', '6.5', '', '', '5.5 to 9.0'],
+        ['', '', 'Avg: 6.35', '', '', '', '', ''],
+        ['Fluorocarbon', '3.6.2.1 As Mention in PIA-C-44378E', 'Applied to fabric', '', '', '', '', 'Applied to fabric'],
+        ['Spray rating', 'AATCC 22', '90', '90', '', '90', '', '80, 80, 70 Min.'],
+        ['', '', 'Avg: 90', '', '', '', '', ''],
+      ];
 
-      sheet.getRangeByName('G64:I64').setText('For : Kusumgar Limited');
-      sheet.getRangeByName('G64:I64').cellStyle = tableHeaderStyle;
-      sheet.getRangeByName('G64:I64').cellStyle.borders.bottom.lineStyle = xlsio.LineStyle.none;
-
-      sheet.getRangeByName('G65:I65').cellStyle.borders.all.lineStyle = xlsio.LineStyle.thin;
-      sheet.getRangeByName('G65:I65').cellStyle.borders.all.color = '#000000';
-      sheet.getRangeByName('G65:I65').cellStyle.borders.top.lineStyle = xlsio.LineStyle.none;
-      sheet.getRangeByName('G65:I65').cellStyle.borders.bottom.lineStyle = xlsio.LineStyle.none;
-
-      sheet.getRangeByName('D64:F64').setText('OK');
-      sheet.getRangeByName('D64').cellStyle = type4;
-
-      sheet.getRangeByName('D65:F65').setText('Prepared By');
-      sheet.getRangeByName('D65:F65').cellStyle = tableHeaderStyle;
-
-      sheet.getRangeByName('D66:F66').setText('Chandan Verma');
-      sheet.getRangeByName('D66').cellStyle = type4;
-
-      sheet.getRangeByName('D67:I67').setText('All Parameters are ok ,');
-      sheet.getRangeByName('D67:I67').cellStyle = type8;
-
-      sheet.getRangeByName('D68:E68').setText('qa.vapi');
-      sheet.getRangeByName('D68').cellStyle = type8;
-
-      sheet.getRangeByName('F68:G68').setText('Verified Date Time');
-      sheet.getRangeByName('F68').cellStyle = type5;
-
-      sheet.getRangeByName('H68:I68').setText('26-04-2025  13:01:51');
-      sheet.getRangeByName('H68').cellStyle = type5;
-
-      sheet.getRangeByName('B69:I69').setText('This is ERP generated report henceforth no signature required');
-      sheet.getRangeByName('B69:I69').cellStyle = type6;
-
-      // --- Apply Borders ---
-      final tableRange = sheet.getRangeByName('B21:I63');
-      tableRange.cellStyle.borders.all.lineStyle = xlsio.LineStyle.thin;
-      tableRange.cellStyle.borders.all.color = '#000000';
-
-      final table2Range = sheet.getRangeByName('B64:I69');
-      table2Range.cellStyle.borders.all.lineStyle = xlsio.LineStyle.thin;
-      table2Range.cellStyle.borders.all.color = '#000000';
-
-      for (int row = 1; row <= 69; row++) {
-        final cellA = sheet.getRangeByIndex(row, 1);
-        cellA.cellStyle = rightBorderStyle;
+      for (var test in tests) {
+        sheet.getRangeByName('A$tableStartRow').setText(test[0]);
+        sheet.getRangeByName('B$tableStartRow').setText(test[1]);
+        sheet.getRangeByName('C$tableStartRow').setText(test[2]);
+        sheet.getRangeByName('D$tableStartRow').setText(test[3]);
+        sheet.getRangeByName('E$tableStartRow').setText(test[4]);
+        sheet.getRangeByName('F$tableStartRow').setText(test[5]);
+        sheet.getRangeByName('G$tableStartRow').setText(test[6]);
+        sheet.getRangeByName('H$tableStartRow').setText(test[7]);
+        sheet.getRangeByName('A$tableStartRow:H$tableStartRow').cellStyle = dataStyle;
+        sheet.setRowHeightInPixels(tableStartRow, 25);
+        tableStartRow++;
       }
 
-      for (int row = 1; row <= 4; row++) {
-        sheet.getRangeByName('I$row').cellStyle = rightBorderStyle;
-      }
-
-      for (int row = 6; row <= 20; row++) {
-        sheet.getRangeByName('I$row').cellStyle = rightBorderStyle;
-      }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+      // --- Footer ---
+      sheet.getRangeByName('A$tableStartRow:H$tableStartRow').merge();
+      sheet.getRangeByName('A$tableStartRow').setText('KUSUMGAR LIMITED');
+      sheet.getRangeByName('A$tableStartRow:H$tableStartRow').cellStyle = headerStyle;
+      sheet.setRowHeightInPixels(tableStartRow, 30);
 
       // --- Save and Export the Excel File ---
       List<int>? bytes;
