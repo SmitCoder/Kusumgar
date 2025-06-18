@@ -1,0 +1,17 @@
+{
+  "report_details": {
+    "Company": "Kusumgar Limited",
+    "Certification": "An ISO 9001:2015 Company",
+    "Report No": "Q250001331",
+    "Date": "05-04-2025",
+    "Customer": "Airborne Systems NA",
+    "Quality No": "4202",
+    "Quantity": "10,000 Yards",
+    "Width": "65.0 inches"
+  },
+  "test_data": [
+    ["Yarn", "ASTM D276", "Nylon 6-6", "Nylon 6-6", "", "", ""],
+    ["Color", "Visual", "Foliage Green", "Foliage Green", "", "", ""],
+    ["Colorfastness Light", "AATCC 16.3", "3-4", "3-4 min.", "", "", ""]
+  ]
+}

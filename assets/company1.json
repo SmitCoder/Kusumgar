@@ -1,0 +1,29 @@
+{
+  "report_details": {
+    "Company": "Kusumgar Limited",
+    "Certification": "An ISO 9001:2015 Company",
+    "Report No": "Q250001330",
+    "Rec Dt of Sample": "05-04-2025",
+    "Date of Testing": "05-04-2025",
+    "MFG Quality No": "PWNN4201",
+    "Material": "Nylon 66",
+    "SO No": "SO2425-001457",
+    "MFG Unit": "Kusumgar Limited",
+    "Colour": "GN0088 LD No. 4448 - Blue",
+    "Warp Yarn": "Nylon 6-6",
+    "Warp Yarn-1": "Nylon 6-6",
+    "Weft Yarn": "Nylon 6-6",
+    "Weft Yarn-1": "Nylon 6-6",
+    "Reed": "Standard",
+    "Pick": "Standard",
+    "Customer Name": "Airborne Systems Limited",
+    "Dimensions": "ACL02 GN0088 WRSI01 170"
+  },
+  "test_data": [
+    ["Yarn", "ASTM D276", "Nylon 6-6 H.T.", "Nylon 6-6 H.T.", "", "", ""],
+    ["Color", "Visual", "Foliage Green", "Foliage Green", "", "", ""],
+    ["Colorfastness Light", "AATCC 16.3", "3-4", "3-4 min.", "", "", ""],
+    ["Light resistance: Warp", "4.9.2.1 PIA-C-44378E", "[17, 20, 18, 19, 20]", "Not lose > 25%", "", "", ""],
+    ["Light resistance: Filling", "", "[19, 19, 20, 18, 16]", "", "", "", ""]
+  ]
+}
