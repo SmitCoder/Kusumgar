@@ -22,7 +22,7 @@ Map<String, String> reportDetails = {};
 bool _dataLoaded = false;
 bool _isLoading = false;
 String? _message;
-String _selectedCompany = 'Company 1';
+String _selectedCompany = 'Company 3';
 static int _fileCounter = 0;
 
 final Map<String, CompanyConfig> companyConfigs = {

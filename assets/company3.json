@@ -37,7 +37,7 @@
 {"test": "Wet-", "method": "", "pc_no": "4.5", "empty1": "", "empty2": "", "empty3": "", "empty4": "", "standard": "3.5 min."},
 {"test": "Bleeding in damp air", "method": "4.9.3 As Mention in\nPIA-C-44378E", "pc_no": "4", "empty1": "", "empty2": "", "empty3": "", "empty4": "", "standard": "3-4 min."},
 {"test": "Light resistance: Warp-", "method": "4.9.2.1 As Mention in\nPIA-C-44378E", "pc_no": "17", "empty1": "20", "empty2": "18", "empty3": "19", "empty4": "20", "standard": "Not lose more than 25% of original strength"},
-{"test": "(Light Source – Xenon)", "method": "", "pc_no": "Avg: ", "empty1": "", "empty2": "", "empty3": "18.8", "empty4": "", "standard": ""},
+{"test": "(Light Source – Xenon)", "method": "", "pc_no": "Avg: ", "empty1": "18.8", "empty2": "", "empty3": "", "empty4": "", "standard": ""},
 {"test": "Light resistance: Filling", "method": "", "pc_no": "19", "empty1": "19", "empty2": "20", "empty3": "18", "empty4": "16", "standard": ""},
 {"test": "(Light Source – Xenon)", "method": "", "pc_no": "Avg: ", "empty1": "18.4", "empty2": "", "empty3": "", "empty4": "", "standard": ""},
 {"test": "Heat resistance: Warp-", "method": "4.9.2.2 As Mention in\nPIA-C-44378E", "pc_no": "20", "empty1": "21", "empty2": "18", "empty3": "21", "empty4": "15", "standard": "Not lose more than 25% of original strength"},

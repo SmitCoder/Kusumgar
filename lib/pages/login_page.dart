@@ -24,7 +24,7 @@ class _LoginPageState extends State<LoginPage> {
 
     // Hardcoded credentials for simplicity
     const correctUsername = 'admin';
-    const correctPassword = 'password123';
+    const correctPassword = '123';
 
     Future.delayed(const Duration(seconds: 1), () {
       if (_usernameController.text == correctUsername &&

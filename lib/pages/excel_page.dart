@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:provider/provider.dart';
 import '../utils/excel_generator.dart';
+import 'package:data_table_2/data_table_2.dart';
+
 
 class ExcelPage extends StatelessWidget {
   const ExcelPage({super.key});
@@ -233,57 +235,119 @@ class ExcelPage extends StatelessWidget {
                                   color: Colors.white,
                                 ),
                               ),
-                              const SizedBox(height: 10),
+                              const SizedBox(height: 20),
                               SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: DataTable(
                                   columnSpacing: 16,
-                                  headingRowColor: MaterialStateColor.resolveWith(
-                                          (states) => Colors.blue[600]!),
-                                  dataRowColor: MaterialStateColor.resolveWith(
-                                          (states) => Colors.white.withOpacity(0.9)),
-                                  columns: config.columnHeaders
-                                      .asMap()
-                                      .entries
-                                      .map((entry) => DataColumn(
-                                    label: Text(
-                                      entry.value,
-                                      style: const TextStyle(color: Colors.white),
-                                    ),
-                                  ))
-                                      .toList(),
-                                  rows: excelGenerator.testData.asMap().entries.map(
-                                        (entry) {
-                                      int rowIndex = entry.key;
-                                      return DataRow(
-                                        cells: config.columnHeaders.asMap().entries.map(
-                                              (colEntry) {
-                                            int colIndex = colEntry.key;
-                                            return DataCell(
-                                              SizedBox(
-                                                width: 100,
-                                                child: TextFormField(
-                                                  controller: excelGenerator
-                                                      .testDataControllers[rowIndex][colIndex],
-                                                  style: const TextStyle(color: Colors.black87),
-                                                  decoration: const InputDecoration(
-                                                    border: InputBorder.none,
-                                                    contentPadding: EdgeInsets.symmetric(
-                                                        horizontal: 8, vertical: 4),
-                                                  ),
-                                                  onFieldSubmitted: (value) {
-                                                    FocusScope.of(context).unfocus();
-                                                  },
+                                  headingRowColor: MaterialStateColor.resolveWith((states) => Colors.blue[600]!),
+                                  dataRowColor: MaterialStateColor.resolveWith((states) => Colors.white.withOpacity(0.9)),
+                                  columns: config.columnHeaders.asMap().entries.map((entry) {
+                                    return DataColumn(
+                                      label: Text(
+                                        entry.value,
+                                        style: const TextStyle(color: Colors.white),
+                                      ),
+                                    );
+                                  }).toList(),
+                                  rows: excelGenerator.testData.asMap().entries.map((entry) {
+                                    int rowIndex = entry.key;
+                                    return DataRow(
+                                      cells: config.columnHeaders.asMap().entries.map((colEntry) {
+                                        int colIndex = colEntry.key;
+                                        return DataCell(
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(vertical: 4.0),
+                                            child: SizedBox(
+                                              width: 150,
+                                              // height: 200,
+
+                                              child: TextFormField(
+                                                controller: excelGenerator.testDataControllers[rowIndex][colIndex],
+                                                style: const TextStyle(color: Colors.black87),
+                                                decoration: const InputDecoration(
+                                                  border: InputBorder.none,
+                                                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+                                                  isDense: true,
                                                 ),
+                                                maxLines: null,
+                                                minLines: 1,
+                                                keyboardType: TextInputType.multiline,
+                                                textAlignVertical: TextAlignVertical.top,
+                                                onChanged: (value) {
+                                                  (context as Element).markNeedsBuild();
+                                                },
+                                                onFieldSubmitted: (value) {
+                                                  FocusScope.of(context).unfocus();
+                                                },
                                               ),
-                                            );
-                                          },
-                                        ).toList(),
-                                      );
-                                    },
-                                  ).toList(),
+                                            ),
+                                          ),
+                                        );
+                                      }).toList(),
+                                    );
+                                  }).toList(),
                                 ),
                               ),
+                              // SingleChildScrollView(
+                              //   scrollDirection: Axis.horizontal,
+                              //   child: DataTable(
+                              //     columnSpacing: 16,
+                              //     headingRowColor: MaterialStateColor.resolveWith(
+                              //             (states) => Colors.blue[600]!),
+                              //     dataRowColor: MaterialStateColor.resolveWith(
+                              //             (states) => Colors.white.withOpacity(0.9)),
+                              //     dataRowHeight: 60.0, // Increased row height to accommodate more space
+                              //     // verticalMargin: 8.0, // Added vertical margin between rows
+                              //
+                              //
+                              //
+                              //     columns: config.columnHeaders
+                              //         .asMap()
+                              //         .entries
+                              //         .map((entry) => DataColumn(
+                              //       label: Text(
+                              //         entry.value,
+                              //         style: const TextStyle(color: Colors.white),
+                              //       ),
+                              //     ))
+                              //         .toList(),
+                              //     rows: excelGenerator.testData.asMap().entries.map(
+                              //           (entry) {
+                              //         int rowIndex = entry.key;
+                              //         return DataRow(
+                              //           cells: config.columnHeaders.asMap().entries.map(
+                              //                 (colEntry) {
+                              //               int colIndex = colEntry.key;
+                              //               return DataCell(
+                              //                   Padding(
+                              //                     padding: const EdgeInsets.symmetric(vertical: 4.0), // Small vertical spacing between rows
+                              //                     child: SizedBox(
+                              //                   width: 150,
+                              //                   child: TextFormField(
+                              //                     controller: excelGenerator.testDataControllers[rowIndex][colIndex],
+                              //                     style: const TextStyle(color: Colors.black87),
+                              //                     decoration: const InputDecoration(
+                              //                       border: InputBorder.none,
+                              //                       contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                              //                     ),
+                              //                     maxLines: null, // Allow unlimited lines
+                              //                     minLines: 1,   // Minimum one line, expands as needed
+                              //                     keyboardType: TextInputType.multiline, // Enable multi-line input
+                              //                     onFieldSubmitted: (value) {
+                              //                       FocusScope.of(context).unfocus();
+                              //                     },
+                              //                   ),
+                              //                 ),
+                              //                   )
+                              //               );
+                              //             },
+                              //           ).toList(),
+                              //         );
+                              //       },
+                              //     ).toList(),
+                              //   ),
+                              // ),
                               const SizedBox(height: 20),
                               ExpansionTile(
                                 title: const Text(
