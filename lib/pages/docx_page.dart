@@ -4,8 +4,13 @@ import 'package:animate_do/animate_do.dart';
 import 'package:provider/provider.dart';
 import '../utils/docx_generator.dart';
 
+// class DocxPage extends StatelessWidget {
+// const DocxPage({super.key});
 class DocxPage extends StatelessWidget {
-const DocxPage({super.key});
+  final String number;
+
+  const DocxPage({required this.number, super.key});
+
 
 @override
 Widget build(BuildContext context) {

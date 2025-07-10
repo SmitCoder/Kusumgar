@@ -6,8 +6,13 @@ import '../utils/excel_generator.dart';
 import 'package:data_table_2/data_table_2.dart';
 
 
+// class ExcelPage extends StatelessWidget {
+//   const ExcelPage({super.key});
 class ExcelPage extends StatelessWidget {
-  const ExcelPage({super.key});
+  final String number;
+
+  const ExcelPage({required this.number, super.key});
+
 
   @override
   Widget build(BuildContext context) {
