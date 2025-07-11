@@ -183,7 +183,74 @@ class _HomePageState extends State<HomePage> {
 
   final List<String> requiredKeys = ["Test","Test method" , "Test result sub line"];
 
-  Map<String, dynamic> _generateJsonFromQualityData(qualityorder,  company) {
+  // Map<String, dynamic> _generateJsonFromQualityData(qualityorder,  company) {
+  //   print("qualityorder while generating json: $qualityorder");
+  //
+  //   final sheet = _excel.tables['QualityData'];
+  //   if (sheet == null) {
+  //     print("❌ QualityData sheet not found");
+  //     return {};
+  //   }
+  //
+  //   final rows = sheet.rows;
+  //   if (rows.length < 2) {
+  //     print("❌ Not enough rows in QualityData sheet");
+  //     return {};
+  //   }
+  //
+  //   final headerRow = rows[0];
+  //
+  //   // Find the index of "Quality Order" column
+  //   int qualityOrderIndex = headerRow.indexWhere((cell) =>
+  //   cell?.value.toString().trim().toLowerCase() == 'quality order');
+  //   if (qualityOrderIndex == -1) {
+  //     print('❌ "Quality Order" column not found in header');
+  //   } else {
+  //     print('✅ Quality Order Index: $qualityOrderIndex');
+  //   }
+  //
+  //   List<Map<String, dynamic>> matchedRows = [];
+  //
+  //   for (int i = 1; i < rows.length; i++) {
+  //     final row = rows[i];
+  //
+  //     // Make sure row has enough columns
+  //     if (row.length <= qualityOrderIndex) continue;
+  //
+  //     final cellValue = row[qualityOrderIndex]?.value?.toString()?.trim();
+  //
+  //     if (cellValue == qualityorder) {
+  //       Map<String, dynamic> rowData = {};
+  //
+  //       for (int j = 0; j < headerRow.length; j++) {
+  //         final key = headerRow[j]?.value?.toString()?.trim();
+  //         final cell = j < row.length ? row[j] : null;
+  //         final value = cell?.value?.toString(); // Converts SharedString to string
+  //
+  //         if (key != null && requiredKeys.contains(key)) {
+  //           rowData[key] = value;
+  //         }
+  //       }
+  //
+  //
+  //       matchedRows.add(rowData);
+  //     }
+  //   }
+  //
+  //   if (matchedRows.isEmpty) {
+  //     print("⚠️ No rows matched the qualityorder: $qualityorder");
+  //     return {};
+  //   }
+  //
+  //   return {
+  //     "company": company,
+  //     "qualityOrder": qualityorder,
+  //     "matchedRows": matchedRows,
+  //   };
+  // }
+
+
+  Map<String, dynamic> _generateJsonFromQualityData(qualityorder, company) {
     print("qualityorder while generating json: $qualityorder");
 
     final sheet = _excel.tables['QualityData'];
@@ -205,16 +272,18 @@ class _HomePageState extends State<HomePage> {
     cell?.value.toString().trim().toLowerCase() == 'quality order');
 
     if (qualityOrderIndex == -1) {
-      print("❌ 'Quality Order' column not found in header");
+      print('❌ "Quality Order" column not found in header');
       return {};
+    } else {
+      print('✅ Quality Order Index: $qualityOrderIndex');
     }
 
+    // STEP 1: Collect matched rows
     List<Map<String, dynamic>> matchedRows = [];
 
     for (int i = 1; i < rows.length; i++) {
       final row = rows[i];
 
-      // Make sure row has enough columns
       if (row.length <= qualityOrderIndex) continue;
 
       final cellValue = row[qualityOrderIndex]?.value?.toString()?.trim();
@@ -225,13 +294,12 @@ class _HomePageState extends State<HomePage> {
         for (int j = 0; j < headerRow.length; j++) {
           final key = headerRow[j]?.value?.toString()?.trim();
           final cell = j < row.length ? row[j] : null;
-          final value = cell?.value?.toString(); // Converts SharedString to string
+          final value = cell?.value?.toString();
 
           if (key != null && requiredKeys.contains(key)) {
             rowData[key] = value;
           }
         }
-
 
         matchedRows.add(rowData);
       }
@@ -242,14 +310,47 @@ class _HomePageState extends State<HomePage> {
       return {};
     }
 
+    // STEP 2: Group by Test
+    Map<String, List<Map<String, dynamic>>> grouped = {};
+    for (var row in matchedRows) {
+      final test = row['Test'];
+      if (test == null) continue;
+
+      if (!grouped.containsKey(test)) {
+        grouped[test] = [];
+      }
+      grouped[test]!.add(row);
+    }
+
+    // STEP 3: Transform grouped data into your custom format
+    List<Map<String, dynamic>> finalRows = [];
+
+    grouped.forEach((testName, groupRows) {
+      String method = groupRows.first['Test method'] ?? '';
+      List<String> subValues = groupRows
+          .map((r) => r['Test result sub line']?.toString() ?? '')
+          .toList();
+
+      finalRows.add({
+        'test': testName,
+        'method': method,
+        'pc_no': '',
+        'empty1': subValues.length > 0 ? subValues[0] : '',
+        'empty2': subValues.length > 1 ? subValues[1] : '',
+        'empty3': subValues.length > 2 ? subValues[2] : '',
+        'empty4': subValues.length > 3 ? subValues[3] : '',
+        'empty5': subValues.length > 4 ? subValues[4] : '',
+        'standard': '',
+      });
+    });
+
+    // STEP 4: Return final transformed JSON
     return {
       "company": company,
       "qualityOrder": qualityorder,
-      "matchedRows": matchedRows,
+      "matchedRows": finalRows,
     };
   }
-
-
 
 
 
@@ -276,7 +377,7 @@ class _HomePageState extends State<HomePage> {
   // Main function
   Future<void> generateJsonForSelectedOrder() async {
     if (_selectedQualityOrder == null || _selectedCompany == null) return;
-    print("quality order ${_selectedQualityOrder}");
+    // print("quality order ${_selectedQualityOrder}");
 
     // final data = _getQualityDataRow(_selectedQualityOrder!);
     // if (data == null) {
@@ -593,41 +694,55 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       const SizedBox(height: 24),
-                      ElevatedButton.icon(
-                        icon: const Icon(Icons.table_chart),
-                        label: const Text('Continue to Excel'),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ExcelPage(number: _selectedCompany!),
-                            ),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      ElevatedButton.icon(
-                        icon: const Icon(Icons.description),
-                        label: const Text('Continue to Docx'),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => DocxPage(number: _selectedCompany!),
-                            ),
-                          );
-                        },
-                      ),
-                      ElevatedButton.icon(
-                        icon: const Icon(Icons.save),
-                        label: const Text('Generate JSON'),
-                        onPressed: () async {
-                          await generateJsonForSelectedOrder();
-                        },
-                      ),
 
+                      // Row of buttons
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              icon: const Icon(Icons.table_chart),
+                              label: const Text('Excel'),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ExcelPage(number: _selectedCompany!),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              icon: const Icon(Icons.description),
+                              label: const Text('Docx'),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => DocxPage(number: _selectedCompany!),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              icon: const Icon(Icons.save),
+                              label: const Text('JSON'),
+                              onPressed: () async {
+                                await generateJsonForSelectedOrder();
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
-                  ),
+                  )
+
 
 
               ],
